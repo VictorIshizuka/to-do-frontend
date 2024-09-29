@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  background-color: antiquewhite;
+}
+
+.card {
+  border-radius: 3px;
+  background-color: #ffff;
+  width: auto;
+  height: auto;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+/* 
+@media only screen and (min-width: 375px) {
+  .card {
+    width: auto;
+    height: auto;
+  }
+} */
