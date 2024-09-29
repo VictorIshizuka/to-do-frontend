@@ -24,10 +24,10 @@ const FormToDo = ({ taskToEdit }: FormToDoProps): JSX.Element => {
       if (prevTask) {
         return { ...prevTask, description: newValue };
       }
-      return { description: newValue };
+
+      return { description: newValue, check: false, _id: "" };
     });
   };
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (task && task._id) {

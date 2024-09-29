@@ -71,7 +71,7 @@ const ListToDo = ({ onEditTask }: ListToDoProps): JSX.Element => {
               </button>
               <button
                 className="button-delete"
-                onClick={() => handleDelete(task.id)}
+                onClick={() => handleDelete(task._id)}
               >
                 Delete
               </button>
