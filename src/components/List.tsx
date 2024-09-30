@@ -4,27 +4,39 @@ import "../css/list.css";
 import axios from "axios";
 
 interface ListToDoProps {
-  onEditTask: (task: TaskProps) => void; // prop para comunicar a tarefa que será editada
+  onEditTask: (task: TaskProps) => void;
 }
 
 const ListToDo = ({ onEditTask }: ListToDoProps): JSX.Element => {
   const [listTodo, setListTodo] = useState<TaskProps[]>([]);
 
   useEffect(() => {
-    axios.get("https://todo-api-78c5.onrender.com/task").then(
-      res => {
+    const fetchTasks = async () => {
+      try {
+        const res = await axios.get("https://todo-api-78c5.onrender.com/task");
         setListTodo(res.data.tasks);
-      },
-      error => {
+      } catch (error) {
         console.log(error);
       }
-    );
-  }, [listTodo]);
+    };
+    fetchTasks();
+  }, []);
 
   function handleCheckChange(id: string) {
-    const updatedList = listTodo.map(task =>
-      task._id === id ? { ...task, check: !task.check } : task
-    );
+    const updatedList = listTodo.map(task => {
+      if (task._id === id) {
+        const updatedTask = { ...task, checked: !task.checked };
+        axios
+          .put(`https://todo-api-78c5.onrender.com/task/${id}`, {
+            checked: updatedTask.checked,
+          })
+          .then(res => {
+            alert(res.data.message);
+          });
+        return updatedTask;
+      }
+      return task;
+    });
     setListTodo(updatedList);
   }
 
@@ -52,32 +64,34 @@ const ListToDo = ({ onEditTask }: ListToDoProps): JSX.Element => {
         </tr>
       </thead>
       <tbody>
-        {listTodo.map(task => (
-          <tr key={task._id}>
-            <td className="checkbox">
-              <input
-                type="checkbox"
-                checked={task.check}
-                onChange={() => handleCheckChange(task._id)}
-              />
-            </td>
-            <td className="description">{task.description}</td>
-            <td className="actions">
-              <button
-                className="button-edit"
-                onClick={() => onEditTask(task)} // Passa a tarefa a ser editada para o componente pai
-              >
-                Edit
-              </button>
-              <button
-                className="button-delete"
-                onClick={() => handleDelete(task._id)}
-              >
-                Delete
-              </button>
-            </td>
-          </tr>
-        ))}
+        {listTodo.map(task => {
+          return (
+            <tr key={task._id}>
+              <td className="checkbox">
+                <input
+                  type="checkbox"
+                  checked={task.checked}
+                  onChange={() => handleCheckChange(task._id)}
+                />
+              </td>
+              <td className="description">{task.description}</td>
+              <td className="actions">
+                <button
+                  className="button-edit"
+                  onClick={() => onEditTask(task)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="button-delete"
+                  onClick={() => handleDelete(task._id)}
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );

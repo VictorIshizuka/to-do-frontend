@@ -5,13 +5,12 @@ import axios from "axios";
 import { TaskProps } from "../App";
 
 interface FormToDoProps {
-  taskToEdit: TaskProps | null; // prop para receber a tarefa a ser editada
+  taskToEdit: TaskProps | null;
 }
 
 const FormToDo = ({ taskToEdit }: FormToDoProps): JSX.Element => {
   const [task, setTask] = useState<TaskProps | undefined>(undefined);
 
-  // Quando a tarefa a ser editada mudar, atualiza o estado da tarefa
   useEffect(() => {
     if (taskToEdit) {
       setTask(taskToEdit);
@@ -25,15 +24,15 @@ const FormToDo = ({ taskToEdit }: FormToDoProps): JSX.Element => {
         return { ...prevTask, description: newValue };
       }
 
-      return { description: newValue, check: false, _id: "" };
+      return { description: newValue, checked: false, _id: "" };
     });
   };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (task && task._id) {
       axios
         .put(`https://todo-api-78c5.onrender.com/task/${task?._id}`, {
-          checked: task?.check,
           description: task?.description,
         })
         .then(res => {
@@ -67,7 +66,7 @@ const FormToDo = ({ taskToEdit }: FormToDoProps): JSX.Element => {
   };
   const clearTask = () => {
     localStorage.removeItem("task");
-    setTask(undefined); // limpa o estado após remover do localStorage
+    setTask(undefined);
   };
 
   return (

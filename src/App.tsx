@@ -6,7 +6,7 @@ import "./css/container.css";
 export interface TaskProps {
   _id: string;
   description: string;
-  check: boolean;
+  checked: boolean;
 }
 
 function App() {
