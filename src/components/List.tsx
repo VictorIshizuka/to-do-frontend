@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { TaskProps } from "../App";
 import "../css/list.css";
 import axios from "axios";
@@ -22,37 +22,36 @@ const ListToDo = ({ onEditTask }: ListToDoProps): JSX.Element => {
     fetchTasks();
   }, []);
 
-  function handleCheckChange(id: string) {
-    const updatedList = listTodo.map(task => {
-      if (task._id === id) {
-        const updatedTask = { ...task, checked: !task.checked };
-        axios
-          .put(`https://todo-api-78c5.onrender.com/task/${id}`, {
-            checked: updatedTask.checked,
-          })
-          .then(res => {
-            alert(res.data.message);
-          });
-        return updatedTask;
-      }
-      return task;
+  const handleCheckChange = useCallback((id: string) => {
+    setListTodo(prevList => {
+      const updatedList = prevList.map(task => {
+        if (task._id === id) {
+          const updatedTask = { ...task, checked: !task.checked };
+          axios
+            .put(`https://todo-api-78c5.onrender.com/task/${id}`, {
+              checked: updatedTask.checked,
+            })
+            .then(res => {
+              console.log(res.data.message);
+            })
+            .catch(err => console.log(err));
+          return updatedTask;
+        }
+        return task;
+      });
+      return updatedList;
     });
-    setListTodo(updatedList);
-  }
+  }, []);
 
-  function handleDelete(id: string) {
-    axios.delete(`https://todo-api-78c5.onrender.com/task/${id}`).then(
-      res => {
+  const handleDelete = useCallback((id: string) => {
+    axios
+      .delete(`https://todo-api-78c5.onrender.com/task/${id}`)
+      .then(res => {
         alert(res.data.message);
-        listTodo.filter(item => item._id !== id);
-      },
-      error => {
-        console.log(error);
-      }
-    );
-    const updatedList = listTodo.filter(task => task._id !== id);
-    setListTodo(updatedList);
-  }
+        setListTodo(prevList => prevList.filter(task => task._id !== id));
+      })
+      .catch(err => console.log(err));
+  }, []);
 
   return (
     <table className="table-list">
